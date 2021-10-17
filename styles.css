@@ -1,0 +1,97 @@
+canvas{
+    background-color: rgb(49,49,49);
+    margin: 0;
+    padding: 0;
+    max-width: 100%;
+    max-height: 100%;
+    height: 100%;
+    width: 100%;
+    /* transform: scale(0.5); */
+    
+
+}
+
+#root{
+    height: 100vh;
+}
+*{
+    margin: 0;
+    padding: 0; 
+    background-color: rgb(49,49,49);
+
+}
+
+*:webkit-::-webkit-scrollbar{
+    display: none;
+}
+
+.scoreboard{
+    position: fixed;
+    top: 5%;
+    left: 5%;
+    font: 600 1.4vmax "Franklin Gothic Medium", sans-serif;
+    color: white;
+    display:none;
+    user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+}
+
+form{
+    background-color: rgba(255,255,255,0.158);
+    height: 60vh;
+    width: 60vw;
+    min-width: 300px;
+    min-height: 300px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    border-radius: 5px;
+    justify-content: center;
+    align-items: center;
+
+}
+
+
+form > select, form select option{
+    padding: 2vmax;
+    width: 20vw;
+    min-width: 150px;
+    font-size: 1.5vmax;
+    text-align: center;
+    font-family: 'Patrick Hand', cursive;
+    outline: none;
+    transition: all 0.2s;
+    border:none;
+    background-color: white;
+}
+
+form > input{
+    padding: 2vmax;
+    margin: 2vmax;
+    cursor: pointer;
+    background-color: indianred;
+    width: 20vw;
+    min-width: 150px;
+    font-size: 1.5vmax;
+    text-align: center;
+    font-family: 'Patrick Hand', cursive;
+    outline: none;
+    transition: all 0.2s;
+    border:none;
+    color: white;
+}
+
+form > select:hover{
+    box-shadow: 0 0 10px white;
+}
+
+form > input:hover{
+    box-shadow: 0 0 10px white;
+    background-color: rbg(194,27,91);
+}
