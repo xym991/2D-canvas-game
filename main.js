@@ -1,12 +1,33 @@
 const canvas = document.createElement("canvas");
 const root = document.querySelector(".game");
+const pregame = document.querySelector(".pre-game");
 canvas.height = innerHeight *2;
 canvas.width = innerWidth  * 2;
 root.appendChild(canvas);
 
+
 let diff = 2;
 const form = document.querySelector("form");
 const scoreboard = document.querySelector(".scoreboard");
+let playerScore=0;
+
+///color: rgba(255,0,133,1)
+
+
+
+//audio
+
+const intro = new Audio("./music/introSong.mp3");
+const gameOverSound = new Audio("./music/gameOver.mp3");
+gameOverSound.playbackRate= 3;
+const shootingSound = new Audio("./music/shoooting.mp3");
+shootingSound.playbackRate = 2.5;
+const heavyWeaponSound = new Audio("./music/heavyWeapon.mp3");
+heavyWeaponSound.playbackRate=3;
+const killSound = new Audio("./music/killEnemy.mp3")
+killSound.playbackRate = 1.4;
+
+
 
 //------------------------------------------------------
 
@@ -15,6 +36,8 @@ document.querySelector("input").addEventListener("click", (e) => {
 
     form.style.display = "none";
     scoreboard.style.display = " block"
+    pregame.style.display = "none"
+  
 
 
     const val = document.querySelector("select").value;
@@ -22,7 +45,7 @@ document.querySelector("input").addEventListener("click", (e) => {
 
     if (val == "easy") {
         setInterval(spawn, 1400);
-        return (diff = 5)
+        return (diff = 6)
     }
     if (val == "medium") {
         setInterval(spawn, 1400);
@@ -217,8 +240,10 @@ function animate() {
         );
 
         if (distPlayernEnemy - enemy.radius - player.radius < 1) {
-           
-            cancelAnimationFrame(animationId)
+      
+            cancelAnimationFrame(animationId);
+            gameOverSound.play();
+            return gameOver();
         }
 
 
@@ -236,6 +261,8 @@ function animate() {
                             radius: enemy.radius-weapon.damage
                         })
                         Weapon.arr.splice(wIn, 1)
+                        playerScore += weapon.damage;
+                        scoreboard.innerHTML = `Score : ${playerScore}`;
                     }, 0)
                 }else{
 
@@ -244,6 +271,9 @@ function animate() {
                     setTimeout(() => {
                         Enemy.arr.splice(enIn, 1)
                         Weapon.arr.splice(wIn, 1)
+                        killSound.play();
+                        playerScore+= Math.floor(enemy.radius)
+                            scoreboard.innerHTML = `Score : ${playerScore}`;
                         for(let i =0 ; i<enemy.radius*3 ; i++){
                             Particle.arr.push(new Particle(weapon.x, weapon.y, 3, enemy.color, {
                                 x : (Math.random()-0.5) * (Math.random() *15),
@@ -277,6 +307,39 @@ setInterval(() => {
 }, 1000)
 
 
+function gameOver(){
+    console.log("over");
+ 
+    const gameOverBanner = document.createElement("div");
+    const gameOverBtn = document.createElement('button');
+    const highscore = document.createElement("div");
+    
+    
+    gameOverBtn.innerText="Play Again";
+
+
+    const prevHighscore = localStorage.getItem('highscore') && localStorage.getItem('highscore');
+    if(playerScore > prevHighscore){
+        localStorage.setItem("highscore", playerScore);
+    }
+    highscore.innerText =  `Highscore : ${localStorage.getItem("highscore") ? localStorage.getItem("highscore") : playerScore}`
+
+    
+    gameOverBanner.appendChild(highscore);
+    gameOverBanner.appendChild(gameOverBtn);
+   
+
+
+    gameOverBtn.onclick = () => window.location.reload();
+
+    gameOverBanner.classList.add("gameover");
+   document.querySelector("body").appendChild(gameOverBanner);
+   
+
+
+
+}
+
 
 
 
@@ -287,7 +350,7 @@ setInterval(() => {
 
 //even listener for bullets
 canvas.addEventListener('click', e => {
-
+    shootingSound.play();
     //defining movement of bullet
     const angle = Math.atan2(e.clientY * 2 - canvas.height / 2, e.clientX * 2 - canvas.width / 2)
     const velocity = {
@@ -303,6 +366,7 @@ canvas.addEventListener('click', e => {
 
 canvas.addEventListener('contextmenu', e => {
     e.preventDefault();
+    heavyWeaponSound.play();
 
     //defining movement of bullet
     const angle = Math.atan2(e.clientY * 2 - canvas.height / 2, e.clientX * 2 - canvas.width / 2)
@@ -325,4 +389,9 @@ window.addEventListener('keypress', e =>{
         console.log("space")
     }
 
+})
+
+
+addEventListener("resize", ()=>{
+   window.location.reload();
 })

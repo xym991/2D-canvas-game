@@ -21,15 +21,17 @@ canvas{
 
 }
 
-*:webkit-::-webkit-scrollbar{
+body::-webkit-scrollbar{
     display: none;
 }
 
 .scoreboard{
     position: fixed;
     top: 5%;
+    background-color: transparent;
+
     left: 5%;
-    font: 600 1.4vmax "Franklin Gothic Medium", sans-serif;
+    font: 600 1.5vmax "Patrick Hand", sans-serif;
     color: white;
     display:none;
     user-select: none;
@@ -39,12 +41,25 @@ canvas{
     -o-user-select: none;
 }
 
+.pre-game{
+    height: 100%;
+    width: 100%;
+    background-color: transparent;
+    position: fixed;
+    top :0;
+
+    left: 0;
+
+}
+
 form{
-    background-color: rgba(255,255,255,0.158);
+    z-index: 10;
+    background-color: rgba(0,0,0,0.1);
     height: 60vh;
     width: 60vw;
     min-width: 300px;
     min-height: 300px;
+    max-height: 500px;
     position: absolute;
     left: 50%;
     top: 50%;
@@ -94,4 +109,50 @@ form > select:hover{
 form > input:hover{
     box-shadow: 0 0 10px white;
     background-color: rbg(194,27,91);
+}
+
+.gameover{
+    /* background-color: rbga(122,122,122,0); */
+    background-color: rgba(0,0,0,0.1);
+    border-radius: 5px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    height: 40vh;
+    width: 60vw;
+    max-height: 500px;
+    min-width: 300px;
+    min-height: 300px;
+
+    padding: 0;
+    margin: 0;
+    transform: translateX(-50%) translateY(-50%);
+     display: flex;
+     flex-direction: column; 
+     align-items: center;
+     justify-content: center;
+}
+
+.gameover > button{
+    padding: 1vmax;
+    border-radius: 2px solid white  ;
+    cursor: pointer;
+    width: 200px;
+    background-color: white;
+    font: 900 1.5vmax "Patrick Hand";
+    transition: 0.2s all;
+}
+
+
+.gameover > button:hover{
+    background-color: rgb(30,30,34);
+    color: white;
+    box-shadow: 0 0 10 white;
+}
+
+.gameover> div{
+    margin: 2vmax;
+    color: white;
+    font: 600 2.5vmax "Patrick Hand";
+    background-color: transparent;
 }
