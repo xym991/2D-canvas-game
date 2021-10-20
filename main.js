@@ -9,7 +9,9 @@ root.appendChild(canvas);
 let diff = 2;
 const form = document.querySelector("form");
 const scoreboard = document.querySelector(".scoreboard");
+const energy = document.querySelector("#energy");
 let playerScore=0;
+let playerEnergy =0;
 
 ///color: rgba(255,0,133,1)
 
@@ -26,6 +28,9 @@ const heavyWeaponSound = new Audio("./music/heavyWeapon.mp3");
 heavyWeaponSound.playbackRate=3;
 const killSound = new Audio("./music/killEnemy.mp3")
 killSound.playbackRate = 1.4;
+const obliteratorSound = new Audio ('./music/hugeWeapon.mp3')
+obliteratorSound.playbackRate = 0.8;
+let multiplyer =1; 
 
 
 
@@ -45,19 +50,23 @@ document.querySelector("input").addEventListener("click", (e) => {
 
     if (val == "easy") {
         setInterval(spawn, 1400);
+        multiplyer =3;
         return (diff = 6)
     }
     if (val == "medium") {
-        setInterval(spawn, 1400);
-        return (diff = 8)
+        setInterval(spawn, 1000);
+        multiplyer =4;
+        return (diff = 6)
     }
     if (val == "hard") {
         setInterval(spawn, 1000);
-        return (diff = 10)
+        multiplyer =5;
+        return (diff = 8)
     }
     if (val == "insane") {
-        setInterval(spawn, 800);
-        return (diff = 12)
+        setInterval(spawn, 700);
+        multiplyer =6;
+        return (diff = 10)
     }
 })
 
@@ -175,6 +184,27 @@ class Particle extends Entity{
 }
 
 Particle.arr = [];
+
+class Obliterator extends Weapon{
+    constructor() {
+        super(playerPos.x,playerPos.y,40 ,"rgba(255,0,133,1)",{}, 1000)
+    }
+
+    draw() {
+        context.beginPath();
+        context.arc(this.x, this.y, this.radius, Math.PI / 180 * 0, Math.PI / 180 * 360, false);
+        context.strokeStyle =  this.color;
+        context.lineWidth=40;
+        
+        
+        context.stroke();
+
+    }
+    update(){
+        this.radius +=30; 
+        this.draw();
+    }
+}
 //--------------------------------------------------------------
 
 spawn = function () {
@@ -207,7 +237,7 @@ let animationId;
 let frames = 0;
 function animate() {
     animationId = requestAnimationFrame(animate);
-    context.fillStyle='rgba(49,49,49,0.2)';
+    context.fillStyle='rgba(20,20,20,0.2)';
     
     context.fillRect(0, 0, canvas.width, canvas.height);
     
@@ -226,7 +256,8 @@ function animate() {
     Weapon.arr.forEach((weapon, wIn) => {
      weapon.update()
 
-        if (weapon.x + weapon.radius < 1 || weapon.y + weapon.radius < 1 || weapon.x - weapon.radius > canvas.width || weapon.y - weapon.radius > canvas.height) {
+        if (weapon.x + weapon.radius < 1 || weapon.y + weapon.radius < 1 || weapon.x - weapon.radius > canvas.width || weapon.y - weapon.radius > canvas.height 
+            || (weapon.radius > playerPos.x*1.5 && weapon.radius > playerPos.y *1.5)) {
             Weapon.arr.splice(wIn, 1)
         }
 
@@ -260,8 +291,19 @@ function animate() {
                         gsap.to(enemy, {
                             radius: enemy.radius-weapon.damage
                         })
-                        Weapon.arr.splice(wIn, 1)
-                        playerScore += weapon.damage;
+                       if(playerEnergy < 100){
+                        playerEnergy+=1;
+                        energy.style.width = playerEnergy+ "%";
+                        energy.style.backgroundColor  ="cyan";
+                       }else{
+                        energy.style.backgroundColor = "rgba(255,0,133,1)";
+                       }
+                        
+                        if(weapon.damage < 100){
+                            Weapon.arr.splice(wIn, 1)
+                        }
+                       
+                        playerScore += weapon.damage * multiplyer;
                         scoreboard.innerHTML = `Score : ${playerScore}`;
                     }, 0)
                 }else{
@@ -270,12 +312,22 @@ function animate() {
                
                     setTimeout(() => {
                         Enemy.arr.splice(enIn, 1)
-                        Weapon.arr.splice(wIn, 1)
+                        if(weapon.damage < 100){
+                            Weapon.arr.splice(wIn, 1)
+                        }
+                        if(playerEnergy < 99){
+                            playerEnergy+=2;
+                            energy.style.width = playerEnergy+ "%";
+                            energy.style.backgroundColor  ="cyan";
+                           }else{
+                               if(playerEnergy ===99)playerEnergy+=1;
+                               energy.style.backgroundColor = "rgba(255,0,133,1)";
+                           }
                         killSound.play();
-                        playerScore+= Math.floor(enemy.radius)
+                        playerScore+= Math.floor(enemy.radius) * multiplyer;
                             scoreboard.innerHTML = `Score : ${playerScore}`;
                         for(let i =0 ; i<enemy.radius*3 ; i++){
-                            Particle.arr.push(new Particle(weapon.x, weapon.y, 3, enemy.color, {
+                            Particle.arr.push(new Particle(enemy.x, enemy.y, 3, enemy.color, {
                                 x : (Math.random()-0.5) * (Math.random() *15),
                                 y:(Math.random()-0.5) *(Math.random() *15)
                             }))
@@ -308,7 +360,7 @@ setInterval(() => {
 
 
 function gameOver(){
-    console.log("over");
+ 
  
     const gameOverBanner = document.createElement("div");
     const gameOverBtn = document.createElement('button');
@@ -366,6 +418,7 @@ canvas.addEventListener('click', e => {
 
 canvas.addEventListener('contextmenu', e => {
     e.preventDefault();
+  if(playerEnergy >= 2){
     heavyWeaponSound.play();
 
     //defining movement of bullet
@@ -379,6 +432,10 @@ canvas.addEventListener('contextmenu', e => {
     //initializing the bullet 
     const weapon = new Weapon(canvas.width / 2, canvas.height / 2, 40, `cyan`, velocity,60);
     Weapon.arr.push(weapon);
+    playerEnergy-=4;
+    energy.style.width = playerEnergy+ "%";
+    energy.style.backgroundColor  ="cyan";
+  }
 });
 
 
@@ -386,7 +443,14 @@ canvas.addEventListener('contextmenu', e => {
 window.addEventListener('keypress', e =>{
  
     if(e.key =" "){
-        console.log("space")
+        if(playerEnergy ===100){
+            obliteratorSound.play();
+            Weapon.arr.push(new Obliterator());   
+            playerEnergy=0;
+            energy.style.width = playerEnergy+ "%";
+            energy.style.backgroundColor  ="cyan";
+        }
+       
     }
 
 })

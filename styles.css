@@ -1,5 +1,6 @@
 canvas{
-    background-color: rgb(49,49,49);
+    background-color: rgb(20,20,20);
+    /* background-color: black; */
     margin: 0;
     padding: 0;
     max-width: 100%;
@@ -25,7 +26,7 @@ body::-webkit-scrollbar{
     display: none;
 }
 
-.scoreboard{
+.attributes{
     position: fixed;
     top: 5%;
     background-color: transparent;
@@ -33,12 +34,34 @@ body::-webkit-scrollbar{
     left: 5%;
     font: 600 1.5vmax "Patrick Hand", sans-serif;
     color: white;
-    display:none;
+    /* display:none; */
     user-select: none;
     -moz-user-select: none;
     -khtml-user-select: none;
     -webkit-user-select: none;
     -o-user-select: none;
+}
+
+.meter{
+    width: 200px;
+    height: 16px;
+    /* border:2px solid rgba(0, 0, 0, 0.5); */
+    /* border-radius: 10px; */
+    position: fixed;
+    display: flex;
+    background-color: rgba(255,255,255,0.1);
+    /* align-items: center; */
+}
+
+#energy{
+    background-color: cyan;
+    /* border-radius: 10px; */
+    height: 16px;
+    /* width: 0%; */
+
+}
+.scoreboard{
+    background-color: transparent;
 }
 
 .pre-game{
